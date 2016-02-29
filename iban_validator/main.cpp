@@ -3,19 +3,24 @@
 #include "Specification.h"
 #include "Validate.h"
 
-int main(int argc, char *argv[])
-{
+void usage(char *progname) {
+	printf("%s [IBAN]\n\n"
+		" IBAN\tValidate IBAN account\n"
+		, progname);
+}
+
+int main(int argc, char *argv[]) {
 	Validate val;
-	std::string arg;
-	if (argc == 2) {
-		arg = argv[1];
-	} else {
-		arg = "_REPLACE_ME";
+	if (argc < 2) {
+		usage(argv[0]);
+		return 1;
 	}
-	if (val.isValid(arg)) {
-		std::cout << "Valid" << std::endl;
+
+	if (val.isValid(argv[1])) {
+		std::cout << "IBAN is valid" << std::endl;
 	} else {
-		std::cout << "Not Valid" << std::endl;
+		std::cout << "IBAN is invalid" << std::endl;
 	}
+
 	return 0;
 }
