@@ -88,31 +88,29 @@ std::regex parseStructure(std::string structure) {
 	return std::regex(regex.c_str());
 }
 
-void Validate::setSelectedSpecification(std::string countryCode)
-{
-	this->selectedSpec = std::move(this->specifications[countryCode]);
-}
-
 bool Validate::isValid(std::string arg)
 {
-	std::unique_ptr<Specification> spec;
-	spec = (std::make_unique<Specification>("", 0, "", arg));
-	if (!this->selectedSpec) {
-		std::transform(spec->example.begin(), spec->example.end(), spec->example.begin(), toupper);
-		spec->countryCode = spec->example.substr(0, 2);
-		spec->length = spec->example.length();
-		setSelectedSpecification(spec->countryCode);
-	}
-	if (!(this->selectedSpec == nullptr)) {
-		std::string shortened = spec->example.substr(4, spec->example.length());
-		return this->selectedSpec->length == spec->length
-			&& this->selectedSpec->countryCode.compare(spec->countryCode) == 0
-			&& std::regex_match(shortened, parseStructure(this->selectedSpec->structure))
-			&& iso7064Mod97_10(spec->example);
-	}
-	else {
+	std::unique_ptr<Specification> spec = (std::make_unique<Specification>(arg));
+
+	/* Convert uppercase */
+	std::transform(spec->example.begin(), spec->example.end(),
+		spec->example.begin(), toupper);
+
+	/* Match on country */
+	spec->countryCode = spec->example.substr(0, 2);
+	spec->length = spec->example.length();
+	std::unique_ptr<Specification> specFound = std::move(this->specifications[spec->countryCode]);
+	if (!specFound)
 		return false;
-	}
+
+	/* Test accountnumber */
+	std::string shortened = spec->example.substr(4, spec->example.length());
+	bool result = specFound->length == spec->length
+		&& specFound->countryCode.compare(spec->countryCode) == 0
+		&& std::regex_match(shortened, parseStructure(specFound->structure))
+		&& iso7064Mod97_10(spec->example);
+
+	return result;
 }
 
 Validate::Validate()
@@ -218,5 +216,12 @@ Validate::Validate()
 	addSpecification(std::move(std::make_unique<Specification>("SN", 28, "U01F23", "SN52A12345678901234567890123")));
 	// Ukraine
 	addSpecification(std::move(std::make_unique<Specification>("UA", 29, "F25", "UA511234567890123456789012345")));
+	
+	// Egypt
+	addSpecification(std::move(std::make_unique<Specification>("EG", 27, "F23", "EG1100006001880800100014553")));
+	// Congo
+	addSpecification(std::move(std::make_unique<Specification>("CG", 27, "F23", "CG5230011000202151234567890")));
+	// Gabon
+	addSpecification(std::move(std::make_unique<Specification>("GA", 27, "F23", "GA2140002000055602673300064")));
 }
 

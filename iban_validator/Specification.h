@@ -9,6 +9,9 @@ public:
 		structure(structure),
 		example(example)
 	{};
+	Specification(std::string example) :
+		example(example)
+	{};
 	std::string countryCode;
 	int length;
 	std::string structure;
