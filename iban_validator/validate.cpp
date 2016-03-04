@@ -98,7 +98,7 @@ bool Validate::isValid(std::string arg)
 
 	/* Match on country */
 	spec->countryCode = spec->example.substr(0, 2);
-	spec->length = spec->example.length();
+	spec->length = (int)spec->example.length();
 	std::unique_ptr<Specification> specFound = std::move(this->specifications[spec->countryCode]);
 	if (!specFound)
 		return false;
