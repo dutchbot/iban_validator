@@ -98,7 +98,7 @@ bool Validate::isValid(std::string arg)
 
 	/* Match on country */
 	spec->countryCode = spec->example.substr(0, 2);
-	spec->length = spec->example.length();
+	spec->length = (int)spec->example.length();
 	Specification* specFound = this->specifications[spec->countryCode];
 	if (!specFound)
 		return false;
@@ -224,5 +224,12 @@ Validate::Validate()
 	addSpecification(new Specification("SN", 28, "U01F23", "SN52A12345678901234567890123"));
 	// Ukraine
 	addSpecification(new Specification("UA", 29, "F25", "UA511234567890123456789012345"));
+
+	// Egypt
+	addSpecification(new Specification("EG", 27, "F23", "EG1100006001880800100014553"));
+	// Congo
+	addSpecification(new Specification("CG", 27, "F23", "CG5230011000202151234567890"));
+	// Gabon
+	addSpecification(new Specification("GA", 27, "F23", "GA2140002000055602673300064"));
 }
 
